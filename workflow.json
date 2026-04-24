@@ -1,0 +1,340 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Monitor de Preços",
+        "formDescription": "Digite o produto e o preço desejado para verificar se é uma boa oportunidade de compra.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Produto"
+            },
+            {
+              "fieldLabel": "preco",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "77b87e53-7d47-4b2d-942d-6bc9d834203b",
+      "name": "Info Produto",
+      "webhookId": "93b81fcd-465e-4188-b0b8-6f8bb5b6cc7d"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.agify.io/?name={{$json.produto}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "07acc82d-1503-45df-aa6d-315111c349c2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f496038d-2880-4638-a18c-94454b06dd28",
+              "leftValue": "={{$json.age}}",
+              "rightValue": "={{$json.preco_alvo}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "be9befab-973e-4fc8-85fa-429d9d7fc8e1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0b39029b-759f-4317-ac3e-73b5c627b956",
+              "name": "mensagem",
+              "value": "O preço está abaixo do seu alvo!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Monitor de Preços",
+        "formDescription": "Digite o produto e o preço desejado para verificar se é uma boa oportunidade de compra.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Produto"
+            },
+            {
+              "fieldLabel": "preco_alvo",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [0, 0],
+      "id": "77b87e53-7d47-4b2d-942d-6bc9d834203b",
+      "name": "Info Produto",
+      "webhookId": "93b81fcd-465e-4188-b0b8-6f8bb5b6cc7d"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.agify.io/?name={{$json[\"Produto\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [208, 0],
+      "id": "07acc82d-1503-45df-aa6d-315111c349c2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f496038d-2880-4638-a18c-94454b06dd28",
+              "leftValue": "={{$json.age}}",
+              "rightValue": "={{$json.preco_alvo}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [416, 0],
+      "id": "be9befab-973e-4fc8-85fa-429d9d7fc8e1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0b39029b-759f-4317-ac3e-73b5c627b956",
+              "name": "message",
+              "value": "🔥 O preço está abaixo do seu alvo!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [624, -80],
+      "id": "4fb38259-eb94-4697-8e07-677ea357da53",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ef9b78c-3a36-4635-8684-21dd8644c4d0",
+              "name": "message",
+              "value": "⚠️ Ainda está acima do preço desejado. Aguarde uma queda.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [624, 96],
+      "id": "70da68f0-bae5-4cf1-a3bd-5a31f578c4b4",
+      "name": "Edit Fields1"
+    }
+  ],
+  "connections": {
+    "Info Produto": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+        624,
+        -80
+      ],
+      "id": "4fb38259-eb94-4697-8e07-677ea357da53",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ef9b78c-3a36-4635-8684-21dd8644c4d0",
+              "name": "Mensagem",
+              "value": " Ainda está acima do preço desejado. Aguarde uma queda.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        96
+      ],
+      "id": "70da68f0-bae5-4cf1-a3bd-5a31f578c4b4",
+      "name": "Edit Fields1"
+    }
+  ],
+  "connections": {
+    "Info Produto": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Info Produto": [
+      {
+        "name": "First item",
+        "code": 1
+      },
+      {
+        "name": "Second item",
+        "code": 2
+      }
+    ],
+    "HTTP Request": [
+      {
+        "name": "Primeiro intem",
+        "code": 1
+      },
+      {
+        "name": "Segundo item",
+        "code": 2
+      }
+    ]
+  },
+  "meta": {
+    "instanceId": "1e3c0a0a0b5f30583f31fe61ef58943a78d668f32f1d027e90205f9472dbbf9a"
+  }
+}
