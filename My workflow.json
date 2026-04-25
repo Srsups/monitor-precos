@@ -1,0 +1,215 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Monitor de Preços",
+        "formDescription": "Digite o produto e o preço desejado para verificar se é uma boa oportunidade de compra.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Produto"
+            },
+            {
+              "fieldLabel": "preco_alvo",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -448,
+        384
+      ],
+      "id": "ee6e3787-06e7-403b-a6df-a8b9f225446f",
+      "name": "Info Produto",
+      "webhookId": "faf225eb-137d-49e8-baee-228d3b7ac2e5"
+    },
+    {
+      "parameters": {
+        "url": "=https://dummyjson.com/products/search?q={{ $json[\"Produto\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -192,
+        384
+      ],
+      "id": "e349e7a2-ebf7-4e82-bb6c-52e14a75bebf",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f496038d-2880-4638-a18c-94454b06dd28",
+              "leftValue": "={{$json[\"products\"][0] [\"price\"] }}",
+              "rightValue": "={{ $('Info Produto').item.json.preco_alvo }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        64,
+        384
+      ],
+      "id": "0132bdb5-ef35-4a45-ba1e-27c05d47e1c6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0b39029b-759f-4317-ac3e-73b5c627b956",
+              "name": "message",
+              "value": "🔥 O preço está abaixo do seu alvo!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        176
+      ],
+      "id": "a9132b4d-f734-4fa9-8c51-c3ec4c818730",
+      "name": "Sucesso"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ef9b78c-3a36-4635-8684-21dd8644c4d0",
+              "name": "message",
+              "value": "⚠️ Ainda está acima do preço desejado. Aguarde uma queda.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        592
+      ],
+      "id": "2e56adb9-373f-4e2c-a73e-a5bc155354f1",
+      "name": "Falha"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "messages": {
+          "values": [
+            {}
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        368
+      ],
+      "id": "ff3e8370-2461-4ee8-8c32-d0a7a634bbba",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vf0xq2tHVyUCq9nn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Info Produto": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Sucesso",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Falha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2fde962e-19a7-41ac-acae-f7b16d7da394",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ddb8b46ee0ccffb36ad78bddebee72b23eccd4168350326ad7e84082419b17cf"
+  },
+  "id": "nGydYQ4WrcmKApBM",
+  "tags": []
+}
