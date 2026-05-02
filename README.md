@@ -19,3 +19,7 @@ flowchart TD
     D --> E[Integrar com API de modelo de IA]
     E --> F[Criar dashboard simples]
 ```
+
+## Como funciona
+
+O usuário informa um produto e um preço desejado. O sistema consulta uma API externa para obter o preço atual e compara com o valor informado. Caso o preço esteja abaixo do esperado, retorna uma mensagem de oportunidade de compra. Caso contrário, informa que o preço ainda não é ideal.
