@@ -33,4 +33,4 @@ flowchart TD
 
 ## Como funciona
 
-O usuário informa um produto e um preço desejado. O sistema consulta uma API externa para obter o preço atual e compara com o valor informado. Caso o preço esteja abaixo do esperado, retorna uma mensagem de oportunidade de compra. Caso contrário, informa que o preço ainda não é ideal.
+O usuário informa ao sistema o produto que deseja monitorar e um preço-alvo para esse produto. Após receber essas informações, o sistema realiza o processamento consultando o preço atual do item e comparando esse valor com o preço-alvo definido pelo usuário. Como saída, o sistema retorna um resultado de sucesso caso o preço atual esteja abaixo do preço-alvo, indicando uma boa oportunidade de compra, ou um resultado de fracasso caso o preço esteja acima do valor desejado.
