@@ -13,11 +13,22 @@ O projeto tem o objetivo de analisar e identificar as melhores opotunidades de p
 ## Arquitetura
 ```mermaid
 flowchart TD
-    A[Adicionar diagrama de arquitetura] --> B[Criar formulário no Google Forms - URL]
-    B --> C[Criar e configurar workflow no n8n]
-    C --> D[Implementar scraper]
-    D --> E[Integrar com API de modelo de IA]
-    E --> F[Criar dashboard simples]
+
+    A["Usuário envia URL do produto"] --> B["Google Forms"]
+
+    B --> C["Workflow no n8n"]
+
+    C --> D["Scraper / Coleta de Dados"]
+
+    D --> E["APIs Externas de Preço e Histórico"]
+    E --> F["Tratamento e Estruturação dos Dados"]
+
+    F --> G["API Gemini"]
+
+    G --> H["Análise de Tendência de Preço"]
+    H --> I["Recomendação: Comprar ou Esperar"]
+
+    I --> J["Dashboard / Visualização ao Usuário"]
 ```
 
 ## Como funciona
