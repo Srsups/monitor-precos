@@ -1,4 +1,5 @@
 {
+  "name": "My workflow",
   "nodes": [
     {
       "parameters": {
@@ -19,20 +20,26 @@
       },
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.5,
-      "position": [0, 0],
-      "id": "77b87e53-7d47-4b2d-942d-6bc9d834203b",
+      "position": [
+        -752,
+        80
+      ],
+      "id": "8d8f8d91-52c0-4316-8e88-171f8ed180d0",
       "name": "Info Produto",
-      "webhookId": "93b81fcd-465e-4188-b0b8-6f8bb5b6cc7d"
+      "webhookId": "ea1dba7f-74c3-4bf0-a906-5d0da465e296"
     },
     {
       "parameters": {
-        "url": "=https://api.agify.io/?name={{$json.Produto}}",
+        "url": "=https://dummyjson.com/products/search?q={{$json[\"Produto\"]}}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [250, 0],
-      "id": "07acc82d-1503-45df-aa6d-315111c349c2",
+      "position": [
+        -496,
+        80
+      ],
+      "id": "290fcdc3-9fda-42da-8a2e-9516c2e54cef",
       "name": "HTTP Request"
     },
     {
@@ -40,14 +47,15 @@
         "conditions": {
           "options": {
             "caseSensitive": true,
+            "leftValue": "",
             "typeValidation": "strict",
             "version": 3
           },
           "conditions": [
             {
               "id": "f496038d-2880-4638-a18c-94454b06dd28",
-              "leftValue": "={{$json.age}}",
-              "rightValue": "={{$json.preco_alvo}}",
+              "leftValue": "={{$json[\"products\"][0][\"price\"]}}",
+              "rightValue": "={{ $('Info Produto').item.json.preco_alvo }}",
               "operator": {
                 "type": "number",
                 "operation": "lt"
@@ -60,8 +68,11 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [500, 0],
-      "id": "be9befab-973e-4fc8-85fa-429d9d7fc8e1",
+      "position": [
+        -256,
+        80
+      ],
+      "id": "f3df0221-df6c-44d9-a65d-0a4a2c77bf74",
       "name": "If"
     },
     {
@@ -71,7 +82,7 @@
             {
               "id": "0b39029b-759f-4317-ac3e-73b5c627b956",
               "name": "message",
-              "value": "🔥 O preço está abaixo do seu alvo!",
+              "value": "O preço está abaixo do seu alvo!",
               "type": "string"
             }
           ]
@@ -80,8 +91,11 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [750, -80],
-      "id": "4fb38259-eb94-4697-8e07-677ea357da53",
+      "position": [
+        0,
+        0
+      ],
+      "id": "d199ed3d-22ae-400e-baed-8a32a9e52183",
       "name": "Sucesso"
     },
     {
@@ -91,7 +105,7 @@
             {
               "id": "4ef9b78c-3a36-4635-8684-21dd8644c4d0",
               "name": "message",
-              "value": "⚠️ Ainda está acima do preço desejado. Aguarde uma queda.",
+              "value": " Ainda está acima do preço desejado. Aguarde uma queda.",
               "type": "string"
             }
           ]
@@ -100,11 +114,15 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [750, 100],
-      "id": "70da68f0-bae5-4cf1-a3bd-5a31f578c4b4",
-      "name": "Aviso"
+      "position": [
+        0,
+        192
+      ],
+      "id": "6cc77317-a6cb-4e41-af66-719a1e9e485f",
+      "name": "Fracasso"
     }
   ],
+  "pinData": {},
   "connections": {
     "Info Produto": {
       "main": [
@@ -139,12 +157,23 @@
         ],
         [
           {
-            "node": "Aviso",
+            "node": "Fracasso",
             "type": "main",
             "index": 0
           }
         ]
       ]
     }
-  }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "82c722c3-0491-4469-9ba0-31858c576064",
+  "meta": {
+    "instanceId": "ce936526f7cf26ed19f5316ac1745d987f2d22c69b152afa32a2fdeb61784f39"
+  },
+  "id": "Bvd6FQRygLu9yhDI",
+  "tags": []
 }
