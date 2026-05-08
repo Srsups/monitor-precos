@@ -1,0 +1,119 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Monitor de Preços",
+        "formDescription": "Digite o produto e o preço desejado para verificar se é uma boa oportunidade de compra.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Produto"
+            },
+            {
+              "fieldLabel": "preco_alvo",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -624,
+        208
+      ],
+      "id": "844e574f-cda4-4126-96e6-58aea9ffd167",
+      "name": "Info Produto",
+      "webhookId": "751d38a8-8847-4729-a34b-8d7a1e3f19e5"
+    },
+    {
+      "parameters": {
+        "url": "=https://dummyjson.com/products/search?q={{ $json[\"Produto\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -368,
+        208
+      ],
+      "id": "34fd177d-02ba-4470-82a4-c66f2950bcd4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gemini-3-flash-lite-preview",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Você é um assistente de monitoramento de preços.\nAnalise preços de produtos e diga se é uma boa oportunidade de compra.\nSeja direto e objetivo.",
+              "role": "model"
+            },
+            {
+              "content": "=Produto: {{$('Info Produto').item.json.Produto}}\n\nPreço atual: {{$json[\"products\"][0][\"price\"]}}\n\nPreço desejado: {{$('Info Produto').item.json.preco_alvo}}\n\nResponda se vale a pena comprar ou não."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        192
+      ],
+      "id": "9b80f6d0-994e-4c37-99d4-52821c66ba60",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "gB7X3jYnZnmrbmOk",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Info Produto": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "828f2135-a906-4a90-946a-9f56c7cbada3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "905a86a7a4c8f981c6e7e672e0367596f84dadef7b97343d7a03e403679b9bef"
+  },
+  "id": "mZu7inY5rE6YMpMV",
+  "tags": []
+}
