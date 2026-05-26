@@ -1,0 +1,247 @@
+{
+  "name": "Monitor de Preços v2",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Monitor de Preços 🛒",
+        "formDescription": "Digite o produto e o preço desejado para verificar se é uma boa oportunidade de compra.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Produto"
+            },
+            {
+              "fieldLabel": "preco_alvo",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -96,
+        -64
+      ],
+      "id": "30062ebb-9695-42ad-a8a9-4b54f7825ca3",
+      "name": "Info Produto",
+      "webhookId": "b6aad14d-aa49-4c1a-89f0-7dafdd30d227"
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_shopping"
+            },
+            {
+              "name": "q",
+              "value": "={{ $json[\"Produto\"] }}"
+            },
+            {
+              "name": "api_key",
+              "value": "541488aa7f130fcdc7d2a0c2aa7a56c2932906dfdb8b4f0f73506dc4a1d05f9d"
+            },
+            {
+              "name": "hl",
+              "value": "pt"
+            },
+            {
+              "name": "gl",
+              "value": "br"
+            },
+            {
+              "name": "num",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        128,
+        -64
+      ],
+      "id": "0f1c293c-08dc-4c01-aa4f-fd3069514f16",
+      "name": "Buscar Preços"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+              "leftValue": "={{ $json.shopping_results }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "array",
+                "operation": "lengthGt",
+                "rightType": "number"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        352,
+        -64
+      ],
+      "id": "420c4bd5-eab3-4488-bef2-2772a4bfc6dd",
+      "name": "Tem Resultados?"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Você é um assistente de compras inteligente. Analise as opções disponíveis e recomende a melhor compra de forma direta e objetiva. Sempre responda em português.",
+              "role": "model"
+            },
+            {
+              "content": "=Produto buscado: {{ $('Info Produto').item.json[\"Produto\"] }}\nPreço alvo: R$ {{ $('Info Produto').item.json[\"preco_alvo\"] }}\n\nResultados encontrados no Google Shopping:\n{{ JSON.stringify($('Buscar Preços').item.json[\"shopping_results\"].slice(0, 5)) }}\n\nFormate sua resposta EXATAMENTE assim, com quebras de linha entre cada seção:\n\n---\n\nDentro do orçamento?\n[✅ Sim / ❌ Não] — [uma frase explicando]\n\n---\n\n🏪 Melhor opção\nProduto: [nome]\nLoja: [nome da loja]\nPreço: R$ [valor]\nLink: [url]\n\n---\n\n💡 Recomendação\n[Comprar agora / Aguardar] — [motivo em 1 ou 2 frases]\n\n---\n\nSiga esse formato rigorosamente. Não adicione texto fora das seções."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        -176
+      ],
+      "id": "c2edc976-0898-4166-8230-60c8a80fc9c5",
+      "name": "Analisar com Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PrPhQMmMjCEMuULE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "=🔍 Resultado da Análise",
+        "completionMessage": "={{ $json.text ?? $json.content.parts[0].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        784,
+        -176
+      ],
+      "id": "7d59071a-c58a-4177-b07d-43a18d0a8c34",
+      "name": "Resposta",
+      "webhookId": "d4c3806d-9434-409f-8acc-b8605ab3e6f7"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Produto não encontrado 😕",
+        "completionMessage": "=Não encontramos resultados para \"{{ $('Info Produto').item.json[\"Produto\"] }}\" no Google Shopping.\n\nTente usar um termo mais genérico. Por exemplo: em vez de \"Samsung Galaxy S24 Ultra 256GB\", tente \"Samsung Galaxy S24 Ultra\".",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        560,
+        64
+      ],
+      "id": "2f30e12c-1cc0-45ee-a0d2-f70a868744e1",
+      "name": "Sem Resultados",
+      "webhookId": "f7a8b9c0-d1e2-3456-f7a8-b9c0d1e2f3a4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Info Produto": {
+      "main": [
+        [
+          {
+            "node": "Buscar Preços",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Preços": {
+      "main": [
+        [
+          {
+            "node": "Tem Resultados?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tem Resultados?": {
+      "main": [
+        [
+          {
+            "node": "Analisar com Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sem Resultados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisar com Gemini": {
+      "main": [
+        [
+          {
+            "node": "Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "735c3279-d89a-474b-b570-b9e2deef4e81",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "85127949a67de898b64c1cfc0d8baad6f5cde1e62b43a8b3fbedc0d98d979400"
+  },
+  "id": "SPcR3l8btt3iSKZ6",
+  "tags": []
+}
